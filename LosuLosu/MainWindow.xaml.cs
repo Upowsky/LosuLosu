@@ -25,11 +25,28 @@ namespace LosuLosu
         int numberOfPeople = 0;
         List<string> listOfPeople = new List<string>();
 
+        public void SetButtons(bool state)
+        {
+            btnRandomize.IsEnabled = state;
+            btnRemove.IsEnabled = state;
+            btnRemoveAll.IsEnabled = state;
+        }
+
+
         public void Refresh()
         {
+            SetButtons(false);
+
             if (File.Exists("Teammates.txt"))
             {
                 numberOfPeople = File.ReadLines("Teammates.txt").Count();
+
+                if (numberOfPeople < 1)
+                    SetButtons(false);
+
+                else
+                    SetButtons(true);
+
                 labelCounter.Content = numberOfPeople;
                 listOfPeople.Clear();
                 
@@ -57,11 +74,14 @@ namespace LosuLosu
         public MainWindow()
         {
             InitializeComponent();
+            listboxTeam.SelectionMode = SelectionMode.Multiple;
             Refresh();
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
+            txtbxPerson.Text = txtbxPerson.Text.Replace(" ", "");
+
             if (txtbxPerson.Text == "")
                 return;
 
@@ -124,16 +144,17 @@ namespace LosuLosu
         {
             if (File.Exists("Teammates.txt"))
             {
-                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Are you sure?", "Delete Confirmation", System.Windows.MessageBoxButton.YesNo);
+                MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("Remove all people?", "Delete Confirmation", System.Windows.MessageBoxButton.YesNo);
                 if (messageBoxResult == MessageBoxResult.Yes)
                 {
                     File.Delete("Teammates.txt");
-                    MessageBox.Show("All poeple removed", "BOOM");
+                    //MessageBox.Show("All poeple removed", "BOOM");
                     Refresh();
                     return;
                 }
                 return;
             }
+
             MessageBox.Show("There is no one to remove!", "Are you kidding me?");
         }
 
@@ -141,7 +162,10 @@ namespace LosuLosu
         {
             if(this.listboxTeam.SelectedIndex >= 0)
             {
-                this.listboxTeam.Items.RemoveAt(this.listboxTeam.SelectedIndex);
+                var newlist = listboxTeam.SelectedItems.Cast<string>().ToList();
+                
+                foreach(string s in newlist)
+                    listboxTeam.Items.Remove(s);
 
                 File.Delete("Teammates.txt");
                 StreamWriter sw = File.CreateText("Teammates.txt");
