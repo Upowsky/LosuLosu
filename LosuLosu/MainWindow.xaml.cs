@@ -22,19 +22,21 @@ namespace LosuLosu
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool resultsFlag = false;
         int numberOfPeople = 0;
         List<string> listOfPeople = new List<string>();
 
         public void SetButtons(bool state)
         {
             btnRandomize.IsEnabled = state;
-            btnRemove.IsEnabled = state;
             btnRemoveAll.IsEnabled = state;
         }
 
 
         public void Refresh()
         {
+            btnAdd.IsEnabled = false;
+            btnRemove.IsEnabled = false;
             SetButtons(false);
 
             if (File.Exists("Teammates.txt"))
@@ -83,7 +85,10 @@ namespace LosuLosu
             txtbxPerson.Text = txtbxPerson.Text.Replace(" ", "");
 
             if (txtbxPerson.Text == "")
+            {
+                MessageBox.Show("Insert person to add.", "Nice try");
                 return;
+            }
 
             txtbxPerson.Text = txtbxPerson.Text.ToLower();
 
@@ -126,13 +131,18 @@ namespace LosuLosu
                     return;
                 }
 
-                int teamSize = Int32.Parse(txtbxTeamSize.Text);
-                double temp = listOfPeople.Count() / teamSize;
+                if (!resultsFlag)
+                {
+                    int teamSize = Int32.Parse(txtbxTeamSize.Text);
+                    double temp = listOfPeople.Count() / teamSize;
 
-                double teamsNumber = Math.Ceiling(temp);
+                    double teamsNumber = Math.Ceiling(temp);
 
-                ResultWindow result1 = new ResultWindow(teamsNumber, teamSize, listOfPeople);
-                result1.Show();
+                    ResultWindow result1 = new ResultWindow(teamsNumber, teamSize, listOfPeople);
+                    result1.Show();
+
+                    //resultsFlag = true;
+                }
             }
             catch
             {
@@ -181,6 +191,27 @@ namespace LosuLosu
 
             MessageBox.Show("Select person to remove.");
         }
+
+        private void listboxTeam_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (listboxTeam.SelectedIndex != -1)
+                btnRemove.IsEnabled = true;
+            else
+                btnRemove.IsEnabled = false;
+        }
+
+        private void txtbxPerson_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (txtbxPerson.Text.Length >= 0)
+                btnAdd.IsEnabled = true;
+        }
+
+        private void txtbxPerson_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (txtbxPerson.Text.Length == 0 && (e.Key == Key.Back || e.Key == Key.Delete))
+                btnAdd.IsEnabled = false;
+        }
+
 
         //private void BtnEdit_Click(object sender, RoutedEventArgs e)
         //{
