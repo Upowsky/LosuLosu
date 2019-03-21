@@ -22,6 +22,7 @@ namespace LosuLosu
         public ResultWindow(double teams,int size,List<string>listOfPeople)
         {
             InitializeComponent();
+            this.Topmost = true;
 
             var rnd = new Random();
             var randomNumbers = Enumerable.Range(0, listOfPeople.Count()).OrderBy(x => rnd.Next()).Take(listOfPeople.Count()).ToList();
