@@ -26,8 +26,7 @@ namespace LosuLosu
 
             var rnd = new Random();
             var randomNumbers = Enumerable.Range(0, listOfPeople.Count()).OrderBy(x => rnd.Next()).Take(listOfPeople.Count()).ToList();
-            int lastTeam = 0;
-
+            int lastTeam = 1;
 
             for (int i = 1; i <= teams; i++)
             {
@@ -40,7 +39,7 @@ namespace LosuLosu
                 }
 
                 txtblockResults.Text += "\n";
-                lastTeam = i+1;
+                lastTeam += 1;
             }
 
             if (randomNumbers.Count > 0)
