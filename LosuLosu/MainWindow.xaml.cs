@@ -26,14 +26,54 @@ namespace LosuLosu
         int numberOfPeople = 0;
         List<string> listOfPeople = new List<string>();
 
-        public void SetButtons(bool state)
+        private void SetButtons(bool state)
         {
             btnRandomize.IsEnabled = state;
             btnRemoveAll.IsEnabled = state;
         }
 
+        private void Add()
+        {
+            txtbxPerson.Text = txtbxPerson.Text.Replace(" ", "");
 
-        public void Refresh()
+            if (txtbxPerson.Text == "")
+            {
+                MessageBox.Show("Insert person to add.", "Nice try");
+                return;
+            }
+
+            txtbxPerson.Text = txtbxPerson.Text.ToLower();
+
+            if (!File.Exists("Teammates.txt"))
+            {
+                StreamWriter sw = File.CreateText("Teammates.txt");
+
+                sw.WriteLine(txtbxPerson.Text);
+                sw.Close();
+            }
+            else
+            {
+                foreach (string line in File.ReadLines("Teammates.txt", Encoding.UTF8))
+                {
+                    if (line.Equals(txtbxPerson.Text))
+                    {
+                        MessageBox.Show(txtbxPerson.Text + " is already on the list.", "Oh man");
+                        txtbxPerson.Text = "";
+                        return;
+                    }
+                }
+
+                StreamWriter sw = File.AppendText("Teammates.txt");
+
+                sw.WriteLine(txtbxPerson.Text);
+                sw.Close();
+            }
+
+            txtbxPerson.Text = "";
+            Refresh();
+        }
+
+        private void Refresh()
         {
             btnAdd.IsEnabled = false;
             btnRemove.IsEnabled = false;
@@ -82,43 +122,7 @@ namespace LosuLosu
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            txtbxPerson.Text = txtbxPerson.Text.Replace(" ", "");
-
-            if (txtbxPerson.Text == "")
-            {
-                MessageBox.Show("Insert person to add.", "Nice try");
-                return;
-            }
-
-            txtbxPerson.Text = txtbxPerson.Text.ToLower();
-
-            if (!File.Exists("Teammates.txt"))
-            {
-                StreamWriter sw = File.CreateText("Teammates.txt");
-
-                sw.WriteLine(txtbxPerson.Text);
-                sw.Close();
-            }
-            else
-            {
-                foreach (string line in File.ReadLines("Teammates.txt", Encoding.UTF8))
-                {
-                    if (line.Equals(txtbxPerson.Text))
-                    {
-                        MessageBox.Show(txtbxPerson.Text + " is already on the list.", "Oh man");
-                        txtbxPerson.Text = "";
-                        return;
-                    }
-                }
-
-                StreamWriter sw = File.AppendText("Teammates.txt");
-
-                sw.WriteLine(txtbxPerson.Text);
-                sw.Close();
-            }
-
-            txtbxPerson.Text = "";
-            Refresh();
+            Add();
         }
 
         private void BtnRandomize_Click(object sender, RoutedEventArgs e)
@@ -210,6 +214,8 @@ namespace LosuLosu
         {
             if (txtbxPerson.Text.Length == 0 && (e.Key == Key.Back || e.Key == Key.Delete))
                 btnAdd.IsEnabled = false;
+            else if (e.Key == Key.Enter)
+                Add();
         }
 
 
