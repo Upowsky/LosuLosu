@@ -206,7 +206,7 @@ namespace LosuLosu
 
         private void txtbxPerson_KeyDown(object sender, KeyEventArgs e)
         {
-            if (txtbxPerson.Text.Length >= 0)
+            if (txtbxPerson.Text.Length >= 0 && e.Key != Key.Enter)
                 btnAdd.IsEnabled = true;
         }
 
@@ -214,7 +214,7 @@ namespace LosuLosu
         {
             if (txtbxPerson.Text.Length == 0 && (e.Key == Key.Back || e.Key == Key.Delete))
                 btnAdd.IsEnabled = false;
-            else if (e.Key == Key.Enter)
+            else if (e.Key == Key.Enter && txtbxPerson.Text.Length > 0)
                 Add();
         }
 
